@@ -27,7 +27,7 @@ pages:
         style:  
           maxWidth: 600
           padding: 30px 0
-          minHeight: 72vh
+          minHeight: 80vh
         layout:
           contentGutter: 20
         blocks:
@@ -45,7 +45,7 @@ pages:
               textAlign: center
               paddingTop: 20
             properties:
-              content: Your input is highly valued. Your input will be used to improve our service to you.
+              content: Your input is highly valued. Your feedback will be used to improve our service to you.
               level: 4
           - id: name
             type: TextInput
@@ -59,44 +59,37 @@ pages:
             properties:
               title: Company Name
               size: large
-          - id: sales_person
-            type: Selector
-            required: true
-            visible:
-              _not:
-                _not:
-                  _state: type
-            properties:
-              color: '#86969F'
-              title: Line Of Business
-              size: large
-              options:
-                - Parts
-                - Sales
-                - Service
           - id: type
             type: ButtonSelector
             required: true
             properties:
-              color: '#86969F'
               title: Type
               size: large
               options:
                 - Feedback
                 - Query
                 - Complaint
-          - id: response_title
-            type: TextInput
+          - id: sales_person
+            type: Selector
             required: true
             visible:
-              _not:
-                _not:
-                  _state: type
+              _and:
+                - _not:
+                    _eq: 
+                      - _state: type
+                      - Feedback
+                - _state: type
             properties:
-              title: 
-                _nunjucks: | 
-                  {{ type }} title
+              title: Sales Person
               size: large
+              options:
+                - Jim Halpert
+                - Dwight K. Schrute
+                - Phyllis Vance
+                - Stanley Hudson
+                - Andy Bernard
+                - Todd Packer
+          
           - id: response
             type: TextArea
             required: true
@@ -127,14 +120,27 @@ pages:
                   _state: response
             properties:
               label:
-                disabled: true 
+                disabled: true
+            actions:
+              onChange:
+                - id: set_flag
+                  type: SetState
+                  params:
+                    satisfaction_changed: true
       
           - id: detractor_response_title
             type: Title
             visible:
-              _lte:
-                - _state: satisfaction
-                - 7
+              _get:
+                key: v
+                from: 
+                  _mql_expr:
+                    v: 
+                      $and:
+                        - $lte:
+                          - _state: satisfaction
+                          - 7
+                        - _state: satisfaction_changed
             style:
               textAlign: center
               paddingTop: 20
@@ -145,20 +151,34 @@ pages:
             type: TextArea
             required: true
             visible:
-              _gt:
-                - _state: satisfaction
-                - 7
+              _get:
+                key: v
+                from: 
+                  _mql_expr:
+                    v: 
+                      $and:
+                        - $lte:
+                          - _state: satisfaction
+                          - 7
+                        - _state: satisfaction_changed
             properties:
               title: Please could your provide us with some further detail on your hesitancy to recommend us so we know what to work on.
               placeholder: What could we have done better?
               size: large
-          
+
           - id: promoter_response_title
             type: Title
             visible:
-              _gt:
-                - _state: satisfaction
-                - 7
+              _get:
+                key: v
+                from: 
+                  _mql_expr:
+                    v: 
+                      $and:
+                        - $gt:
+                          - _state: satisfaction
+                          - 7
+                        - _state: satisfaction_changed
             style:
               textAlign: center
               paddingTop: 20
@@ -169,9 +189,16 @@ pages:
             type: TextArea
             required: true
             visible:
-              _gt:
-                - _state: satisfaction
-                - 7
+              _get:
+                key: v
+                from: 
+                  _mql_expr:
+                    v: 
+                      $and:
+                        - $gt:
+                          - _state: satisfaction
+                          - 7
+                        - _state: satisfaction_changed
             properties:
               title: Good news should be shared! Please can you let us know what made you smile so we can keep up the good work.
               placeholder: What did you like?
@@ -203,13 +230,13 @@ pages:
                   params:
                     pageId: thank-you
             visible:
-              _not: 
-                _not: 
-                  _state: satisfaction
+              _not:
+                _not:
+                  _state: satisfaction_changed
             properties:
               title: Submit
               block: true
-              color: '#e5ab05'
+              color: '#000'
               icon: CheckOutlined
               size: large
       - id: bar_footer
