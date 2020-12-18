@@ -1,1 +1,1 @@
-# Lowdefy Project Template
+# Lowdefy Survey Example

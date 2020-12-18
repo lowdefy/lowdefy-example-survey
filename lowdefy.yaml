@@ -1,24 +1,224 @@
-name: lowdefy-project-template
-version: '0.0.0-alpha.6'
-
-config:
-  homePageId: welcome
-
-menus:
-  - id: default
-    links:
-      - id: examples
-        type: MenuLink
-        url: https://lowdefy.com/examples
-        properties:
-          title: Examples
-          icon: AppstoreOutlined
-      - id: docs
-        type: MenuLink
-        url: https://docs.lowdefy.com
-        properties:
-          title: Docs
-          icon: ReadOutlined
+name: lowdefy-example-survey
+version: '3.1.1'
 
 pages:
-  - _ref: pages/welcome.yaml
+  - id: survey
+    type: Context
+    layout:
+      contentAlign: center
+    blocks:
+      - id: header_bar
+        type: Html
+        properties:
+          html: |
+            <div style="height: 1em; background: #000;"></div> 
+      - id: logo
+        type: Html
+        properties:
+          html: |
+            <div style="background: #fff; text-align: center; padding: 10px"><img src="/public/company_logo.jpg" height="100px"/></div>
+      - id: header_bar
+        type: Html
+        properties:
+          html: |
+            <div style="height: 1em; background: #000;"></div> 
+      - id: content_box
+        type: Box
+        style:  
+          maxWidth: 600
+          padding: 30px 0
+          minHeight: 72vh
+        layout:
+          contentGutter: 20
+        blocks:
+          - id: title
+            type: Title
+            style:
+              textAlign: center
+              paddingTop: 20
+            properties:
+              content: How was your paper experience?
+              level: 1
+          - id: intro
+            type: Title
+            style:
+              textAlign: center
+              paddingTop: 20
+            properties:
+              content: Your input is highly valued. Your input will be used to improve our service to you.
+              level: 4
+          - id: name
+            type: TextInput
+            required: true
+            properties:
+              title: Name & Surname
+              size: large
+          - id: company
+            type: TextInput
+            required: true
+            properties:
+              title: Company Name
+              size: large
+          - id: sales_person
+            type: Selector
+            required: true
+            visible:
+              _not:
+                _not:
+                  _state: type
+            properties:
+              color: '#86969F'
+              title: Line Of Business
+              size: large
+              options:
+                - Parts
+                - Sales
+                - Service
+          - id: type
+            type: ButtonSelector
+            required: true
+            properties:
+              color: '#86969F'
+              title: Type
+              size: large
+              options:
+                - Feedback
+                - Query
+                - Complaint
+          - id: response_title
+            type: TextInput
+            required: true
+            visible:
+              _not:
+                _not:
+                  _state: type
+            properties:
+              title: 
+                _nunjucks: | 
+                  {{ type }} title
+              size: large
+          - id: response
+            type: TextArea
+            required: true
+            visible:
+              _not:
+                _not:
+                  _state: type
+            properties:
+              title: Please tell us more
+              size: large
+          - id: satisfaction_title
+            type: Title
+            visible:
+              _not:
+                _not:
+                  _state: response
+            style:
+              textAlign: center
+              paddingTop: 20
+            properties:
+              content: One last thing, based on your experience with us, how likely are you to recommend Dunder Mufflin Paper Company? 
+              level: 4
+          - id: satisfaction
+            type: RatingSlider
+            visible:
+              _not:
+                _not:
+                  _state: response
+            properties:
+              label:
+                disabled: true 
+      
+          - id: detractor_response_title
+            type: Title
+            visible:
+              _lte:
+                - _state: satisfaction
+                - 7
+            style:
+              textAlign: center
+              paddingTop: 20
+            properties:
+              content: Oh no! We can do better!
+              level: 4
+          - id: detractor_response
+            type: TextArea
+            required: true
+            visible:
+              _gt:
+                - _state: satisfaction
+                - 7
+            properties:
+              title: Please could your provide us with some further detail on your hesitancy to recommend us so we know what to work on.
+              placeholder: What could we have done better?
+              size: large
+          
+          - id: promoter_response_title
+            type: Title
+            visible:
+              _gt:
+                - _state: satisfaction
+                - 7
+            style:
+              textAlign: center
+              paddingTop: 20
+            properties:
+              content: Your smile makes us smile!
+              level: 4
+          - id: promoter_response
+            type: TextArea
+            required: true
+            visible:
+              _gt:
+                - _state: satisfaction
+                - 7
+            properties:
+              title: Good news should be shared! Please can you let us know what made you smile so we can keep up the good work.
+              placeholder: What did you like?
+              size: large
+              label: 
+                colon: false
+          - id: save
+            type: Button
+            requests:
+              - id: save
+                type: MongoDBInsertOne
+                connectionId: g_sheet
+                properties:
+                  doc:
+                    _state: true
+            actions:
+              onClick:
+                - id: set_state
+                  type: SetState
+                  params:
+                    timestamp:
+                      _date: now
+                - id: save
+                  type: Request
+                  params:
+                    - save
+                - id: thank
+                  type: Link
+                  params:
+                    pageId: thank-you
+            visible:
+              _not: 
+                _not: 
+                  _state: satisfaction
+            properties:
+              title: Submit
+              block: true
+              color: '#e5ab05'
+              icon: CheckOutlined
+              size: large
+      - id: bar_footer
+        type: Html
+        properties:
+          html: |
+            <div style="height: 1em; background: #000;"></div> 
+      - id: logo_footer
+        type: Html
+        properties:
+          html: |
+            <div style="background: #fff; text-align: center; padding: 10px"><a href="https://www.lowdefy.com" style="color: #000; font-size: 1em;">This is a Lowdefy example app 🦖</a></div>
