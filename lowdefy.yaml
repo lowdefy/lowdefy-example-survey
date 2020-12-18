@@ -1,6 +1,16 @@
 name: lowdefy-example-survey
 version: '3.1.1'
-
+connections:
+  - id: example_sheet
+    type: GoogleSheet
+    properties:
+      client_email:
+        _secret: SHEETS_CLIENT_EMAIL
+      private_key:
+        _secret: SHEETS_PRIVATE_KEY
+      sheetIndex: 0
+      spreadsheetId: 1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU
+      write: true
 pages:
   - id: survey
     type: Context
@@ -16,7 +26,7 @@ pages:
         type: Html
         properties:
           html: |
-            <div style="background: #fff; text-align: center; padding: 10px"><img src="/public/company_logo.jpg" height="100px"/></div>
+            <div style="background: #fff; text-align: center; padding: 10px"><img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_logo.jpg" height="80px"/></div>
       - id: header_bar
         type: Html
         properties:
@@ -127,7 +137,6 @@ pages:
                   type: SetState
                   params:
                     satisfaction_changed: true
-      
           - id: detractor_response_title
             type: Title
             visible:
@@ -165,7 +174,6 @@ pages:
               title: Please could your provide us with some further detail on your hesitancy to recommend us so we know what to work on.
               placeholder: What could we have done better?
               size: large
-
           - id: promoter_response_title
             type: Title
             visible:
@@ -209,11 +217,28 @@ pages:
             type: Button
             requests:
               - id: save
-                type: MongoDBInsertOne
-                connectionId: g_sheet
+                type: GoogleSheetAppendOne
+                connectionId: example_sheet
                 properties:
-                  doc:
-                    _state: true
+                  row:
+                    name:
+                      _state: name
+                    company:
+                      _state: company
+                    type:
+                      _state: type
+                    sales_person:
+                      _state: sales_person
+                    response:
+                      _state: response
+                    satisfaction:
+                      _state: satisfaction
+                    detractor_response:
+                      _state: detractor_response
+                    promoter_response:
+                      _state: promoter_response
+                    timestamp:
+                      _state: timestamp
             actions:
               onClick:
                 - id: set_state
@@ -221,11 +246,12 @@ pages:
                   params:
                     timestamp:
                       _date: now
-                - id: save
+                - id: validate
+                  type: Validate
+                - id: call_save
                   type: Request
-                  params:
-                    - save
-                - id: thank
+                  params: save
+                - id: to_thank_you_page
                   type: Link
                   params:
                     pageId: thank-you
@@ -239,6 +265,76 @@ pages:
               color: '#000'
               icon: CheckOutlined
               size: large
+          - id: header_bar
+            type: Html
+            visible:
+              _not:
+                _not:
+                  _state: satisfaction_changed
+            style:
+              fontSize: 10
+              textAlign: center
+            properties:
+              html: For this example, the submitted data will be public.
+      - id: bar_footer
+        type: Html
+        properties:
+          html: |
+            <div style="height: 1em; background: #000;"></div> 
+      - id: logo_footer
+        type: Html
+        properties:
+          html: |
+            <div style="background: #fff; text-align: center; padding: 10px"><a href="https://www.lowdefy.com" style="color: #000; font-size: 1em;">This is a Lowdefy example app 🦖</a></div>
+  - id: thank-you
+    type: Context
+    layout:
+      contentAlign: center
+    blocks:
+      - id: header_bar
+        type: Html
+        properties:
+          html: |
+            <div style="height: 1em; background: #000;"></div> 
+      - id: logo
+        type: Html
+        properties:
+          html: |
+            <div style="background: #fff; text-align: center; padding: 10px"><img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_logo.jpg" height="80px"/></div>
+      - id: header_bar
+        type: Html
+        properties:
+          html: |
+            <div style="height: 1em; background: #000;"></div> 
+      - id: content_box
+        type: Box
+        style:  
+          maxWidth: 600
+          padding: 30px 0
+          minHeight: 80vh
+        layout:
+          contentGutter: 20
+        blocks:
+          - id: title
+            type: Title
+            style:
+              textAlign: center
+              paddingTop: 20
+            properties:
+              content: Thank you for you feedback!
+              level: 1
+          - id: thank_you
+            type: Html
+            style:
+              maxWidth: 400
+              margin: auto
+              textAlign: center
+            properties:
+              html: |
+                This webform saved the data to <a href="https://docs.google.com/spreadsheets/d/1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU/edit?usp=sharing">this Google Sheet</a>
+                <br/>
+                <br/>
+                <img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_thank_you.gif" width="100%"/>
       - id: bar_footer
         type: Html
         properties:
