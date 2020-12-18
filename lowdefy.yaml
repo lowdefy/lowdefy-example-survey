@@ -239,6 +239,8 @@ pages:
                       _state: promoter_response
                     timestamp:
                       _state: timestamp
+                    id:
+                      _url_query: id
             actions:
               onClick:
                 - id: set_state
@@ -332,6 +334,10 @@ pages:
             properties:
               html: |
                 This webform saved the data to <a href="https://docs.google.com/spreadsheets/d/1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU/edit?usp=sharing">this Google Sheet</a>
+                <br/>
+                This Lowdefy example is less than 500 lines of YAML. 
+                <br/>
+                <a href="https://github.com/lowdefy/lowdefy-example-survey">Visit the repo to for the Lowdefy config.</a>
                 <br/>
                 <br/>
                 <img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_thank_you.gif" width="100%"/>
