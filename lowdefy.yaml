@@ -1,5 +1,5 @@
 name: lowdefy-example-survey
-version: '3.1.1'
+lowdefy: 3.3.0
 connections:
   - id: example_sheet
     type: GoogleSheet
@@ -7,7 +7,8 @@ connections:
       client_email:
         _secret: SHEETS_CLIENT_EMAIL
       private_key:
-        _secret: SHEETS_PRIVATE_KEY
+        _base64.decode:
+          _secret: SHEETS_PRIVATE_KEY
       sheetIndex: 0
       spreadsheetId: 1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU
       write: true
@@ -23,7 +24,7 @@ pages:
         type: Html
         properties:
           html: |
-            <div style="height: 1em; background: #000;"></div> 
+            <div style="height: 0.2em; background: #000;"></div> 
       - id: logo
         type: Html
         properties:
@@ -33,7 +34,7 @@ pages:
         type: Html
         properties:
           html: |
-            <div style="height: 1em; background: #000;"></div> 
+            <div style="height: 0.2em; background: #000;"></div> 
       - id: content_box
         type: Box
         style:  
@@ -143,16 +144,11 @@ pages:
           - id: detractor_response_title
             type: Title
             visible:
-              _get:
-                key: v
-                from: 
-                  _mql_expr:
-                    v: 
-                      $and:
-                        - $lte:
-                          - _state: satisfaction
-                          - 7
-                        - _state: satisfaction_changed
+              _not:
+                _not:
+                  _lte:
+                    - _state: satisfaction
+                    - 7
             style:
               textAlign: center
               paddingTop: 20
@@ -163,16 +159,11 @@ pages:
             type: TextArea
             required: true
             visible:
-              _get:
-                key: v
-                from: 
-                  _mql_expr:
-                    v: 
-                      $and:
-                        - $lte:
-                          - _state: satisfaction
-                          - 7
-                        - _state: satisfaction_changed
+              _not:
+                _not:
+                  _lte:
+                    - _state: satisfaction
+                    - 7
             properties:
               title: Please could your provide us with some further detail on your hesitancy to recommend us so we know what to work on.
               placeholder: What could we have done better?
@@ -180,16 +171,11 @@ pages:
           - id: promoter_response_title
             type: Title
             visible:
-              _get:
-                key: v
-                from: 
-                  _mql_expr:
-                    v: 
-                      $and:
-                        - $gt:
-                          - _state: satisfaction
-                          - 7
-                        - _state: satisfaction_changed
+              _not:
+                _not:
+                  _gt:
+                    - _state: satisfaction
+                    - 7
             style:
               textAlign: center
               paddingTop: 20
@@ -200,16 +186,11 @@ pages:
             type: TextArea
             required: true
             visible:
-              _get:
-                key: v
-                from: 
-                  _mql_expr:
-                    v: 
-                      $and:
-                        - $gt:
-                          - _state: satisfaction
-                          - 7
-                        - _state: satisfaction_changed
+              _not:
+                _not:
+                  _gt:
+                    - _state: satisfaction
+                    - 7
             properties:
               title: Good news should be shared! Please can you let us know what made you smile so we can keep up the good work.
               placeholder: What did you like?
@@ -290,12 +271,12 @@ pages:
             type: Html
             properties:
               html: |
-                <div style="height: 1em; background: #000;"></div> 
+                <div style="height: 0.2em; background: #000;"></div> 
           - id: logo_footer
             type: Html
             properties:
               html: |
-                <div style="background: #fff; text-align: center;"><span style="font-size:24px;">🦖</span><a href="https://www.lowdefy.com" style="color: #000; font-size: 1em;">This is a Lowdefy example app</a><span style="font-size:24px;">🦖</span></div>
+                <div style="background: #fff; text-align: center;"><span style="font-size:24px;">⚡️</span><a href="https://github.com/lowdefy/lowdefy-example-survey" style="color: #000; font-size: 1em;">View the Lowdefy config for this app</a><span style="font-size:24px;">⚡️</span></div>
   - id: thank-you
     type: Context
     style:
@@ -366,9 +347,9 @@ pages:
             type: Html
             properties:
               html: |
-                <div style="height: 1em; background: #000;"></div> 
+                <div style="height: 0.2em; background: #000;"></div> 
           - id: logo_footer
             type: Html
             properties:
               html: |
-                <div style="background: #fff; text-align: center;"><span style="font-size:24px;">🦖</span><a href="https://www.lowdefy.com" style="color: #000; font-size: 1em;">This is a Lowdefy example app</a><span style="font-size:24px;">🦖</span></div>
+                <div style="background: #fff; text-align: center;"><span style="font-size:24px;">⚡️</span><a href="https://github.com/lowdefy/lowdefy-example-survey" style="color: #000; font-size: 1em;">View the Lowdefy config for this app</a><span style="font-size:24px;">⚡️</span></div>
