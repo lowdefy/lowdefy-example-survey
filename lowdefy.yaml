@@ -1,5 +1,5 @@
 name: lowdefy-example-survey
-lowdefy: 3.4.0
+lowdefy: 3.10.0
 licence: MIT
 connections:
   # Create a connection to our Google sheet which will store our survey data.
@@ -44,7 +44,7 @@ pages:
           # Filter all employees which has the role of "Sales person" in the data
           filter: 
             role: Sales person 
-    actions:
+    events:
       onInitAsync:
         # When the page initializes, the get_employee request is executed to fetch all "Sales person" employees. 
         - id: go_get_employees  
@@ -52,18 +52,12 @@ pages:
           params: get_employees # Here we refer to the get_employees id. 
     blocks:
       # Add some very basic HTML to create a nice customer friendly company banner.
-      - id: header_bar
-        type: Html
-        properties:
-          html: '<div style="height: 0.3em; background: #000;"></div>'
       - id: logo
         type: Html
+        style:
+          borderBottom: '0.3em solid #000'
         properties:
           html: '<div style="background: #fff; text-align: center; padding: 10px"><img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_logo.jpg" height="80px"/></div>'
-      - id: header_bar
-        type: Html
-        properties:
-          html: '<div style="height: 0.3em; background: #000;"></div>'
       # Wrap our survey questioner to center it nicely for all screen sizes.
       - id: content_box
         type: Box
@@ -253,7 +247,7 @@ pages:
                 properties:
                   row:
                     _state: true
-            actions:
+            events:
               # When the save button is clicked:
               onClick:
                 - id: set_state # Add a timestamp variable to the context state.
@@ -295,13 +289,21 @@ pages:
           offsetBottom: 0
         blocks:
           - id: bar_footer
-            type: Html
-            properties:
-              html: '<div style="height: 0.3em; background: #000;"></div>'
-          - id: logo_footer
-            type: Html
-            properties:
-              html: '<div style="padding: 10px;  background: #fff; text-align: center;">⚡️ <a href="https://github.com/lowdefy/lowdefy-example-survey">View the Lowdefy config for this app</a> ⚡️</div>'
+            type: Box
+            layout:
+              contentJustify: center
+            style:
+              background: '#fff'
+              padding: 5
+              borderTop: '0.3em solid #000'
+            blocks:
+              - id: link_repo
+                type: Anchor
+                layout:
+                  shrink: 1
+                properties:
+                  href: https://github.com/lowdefy/lowdefy-example-survey
+                  title: ⚡️ View the Lowdefy config for this app ⚡️
   # Create a simple thank you page to show customers when they have completed the survey.
   - id: thank-you
     type: Context
@@ -310,18 +312,12 @@ pages:
     layout:
       contentAlign: center
     blocks:
-      - id: header_bar
-        type: Html
-        properties:
-          html: '<div style="height: 0.3em; background: #000;"></div>'
       - id: logo
         type: Html
+        style:
+          borderBottom: '0.3em solid #000'
         properties:
           html: '<div style="background: #fff; text-align: center; padding: 10px"><img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_logo.jpg" height="80px"/></div>'
-      - id: header_bar
-        type: Html
-        properties:
-          html: '<div style="height: 0.3em; background: #000;"></div>'
       - id: content_box
         type: Box
         style:  
@@ -349,7 +345,7 @@ pages:
             properties:
               html: |
                 Webform data saved to <a href="https://docs.google.com/spreadsheets/d/1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU/edit?usp=sharing">this Google Sheet</a>.
-                <br/><br/> This Lowdefy example reads and writes data from a Google sheet and manages complex webform logic. <br/> All in 370 lines of YAML. 
+                <br/><br/> This Lowdefy example reads and writes data from a Google sheet and manages complex webform logic. <br/> All in 400 lines of YAML. 
                 <br/><br/> <a href="https://github.com/lowdefy/lowdefy-example-survey">Visit the repo for the Lowdefy config.</a>
                 <br/><br/> <img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_thank_you.gif" width="100%"/>
                 <br/><br/> <h5>Built with</h5>
@@ -360,10 +356,18 @@ pages:
           offsetBottom: 0
         blocks:
           - id: bar_footer
-            type: Html
-            properties:
-              html: '<div style="height: 0.3em; background: #000;"></div>'
-          - id: logo_footer
-            type: Html
-            properties:
-              html: '<div style="padding: 10px; background: #fff; text-align: center;">⚡️ <a href="https://github.com/lowdefy/lowdefy-example-survey">View the Lowdefy config for this app</a> ⚡️</div>'
+            type: Box
+            layout:
+              contentJustify: center
+            style:
+              background: '#fff'
+              padding: 5
+              borderTop: '0.3em solid #000'
+            blocks:
+              - id: link_repo
+                type: Anchor
+                layout:
+                  shrink: 1
+                properties:
+                  href: https://github.com/lowdefy/lowdefy-example-survey
+                  title: ⚡️ View the Lowdefy config for this app ⚡️
