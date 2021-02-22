@@ -1,5 +1,5 @@
 name: lowdefy-example-survey
-lowdefy: 3.10.0
+lowdefy: 3.10.1
 licence: MIT
 connections:
   # Create a connection to our Google sheet which will store our survey data.
