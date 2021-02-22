@@ -1,10 +1,12 @@
 # A Lowdefy Survey Example
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/876fec02-9046-437e-8d76-439f867f1c4d/deploy-status)](https://app.netlify.com/sites/lowdefy-example-survey/deploys)
+
 > [View this example.](https://example-survey.lowdefy.com)
 
 This is a simple customer survey example built with Lowdefy. With this example we demonstrate how simple it is to define a public webform and thank you page in Lowdefy.
 
-This reporting example is deployed using [Netlify](https://docs.lowdefy.com/deployment).
+This survey example is deployed using [Netlify](https://docs.lowdefy.com/deployment).
 
 This example queries all employees with the "Sales person" role from a [Google sheet](https://docs.google.com/spreadsheets/d/1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU/edit?usp=sharing#gid=841255153) on page initialization. This list of sales people names are used to populate a dropdown selector in the webform. The webform contains some conditional logic which demonstrates Lowdefy's ability to express advanced custom logic in simple readable app config. See the logic in action by writing a complaint about Dwight. Upon completion, the captured data is saved as a new entry to the Google sheet.
 
