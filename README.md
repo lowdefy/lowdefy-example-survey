@@ -1,4 +1,4 @@
-# A Lowdefy Survey Example
+# Lowdefy Survey Example
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/876fec02-9046-437e-8d76-439f867f1c4d/deploy-status)](https://app.netlify.com/sites/lowdefy-example-survey/deploys)
 
@@ -17,7 +17,7 @@ All this in less than 400 lines of YAML config. View the source in the [lowdefy.
 - Clone this repository or copy the content of the `lowdefy.yaml` into a `lowdefy.yaml` file in your local folder.
 - Create a Google sheet and share the sheet with a GService API account, see [the getting started tutorial](https://docs.lowdefy.com/tutorial-start) or [the Google sheets Lowdefy docs](https://docs.lowdefy.com/GoogleSheet) for an in depth guide on linking a Google sheet.
 - Create `.env` file and set both the `LOWDEFY_SECRET_SHEETS_CLIENT_EMAIL` and `LOWDEFY_SECRET_SHEETS_PRIVATE_KEY` environment variables. (Make sure to never commit your secrets to your code repository.)
-- Run the Lowdefy CLI from the cloned repository folder `npx lowdefy@latest dev`.
+- In the command console, navigate to your project folder and run the Lowdefy CLI: `npx lowdefy@latest dev`.
 
 ## Deploying this example
 
