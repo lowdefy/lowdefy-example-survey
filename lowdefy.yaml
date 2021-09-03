@@ -1,22 +1,22 @@
 name: lowdefy-example-survey
-lowdefy: 3.10.1
+lowdefy: 3.21.2
 licence: MIT
 connections:
   # Create a connection to our Google sheet which will store our survey data.
-  - id: survey_sheet 
+  - id: survey_sheet
     type: GoogleSheet
     properties:
       client_email:
         _secret: SHEETS_CLIENT_EMAIL
-      # Here base64 decoding is used to decode our SHEETS_PRIVATE_KEY environment variable. Our private key was saved as base64 encoded in our Netlify deployment environment variable. This is just a little hack since Netlify has a hard time processing environment variables which contains new line characters. 
+      # Here base64 decoding is used to decode our SHEETS_PRIVATE_KEY environment variable. Our private key was saved as base64 encoded in our Netlify deployment environment variable. This is just a little hack since Netlify has a hard time processing environment variables which contains new line characters.
       private_key:
-        _base64.decode: 
+        _base64.decode:
           _secret: SHEETS_PRIVATE_KEY
       sheetIndex: 0
       spreadsheetId: 1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU
       write: true
   # Create a connection to our Google sheet which will read our employee data from the employee sheet.
-  - id: employee_sheet 
+  - id: employee_sheet
     type: GoogleSheet
     properties:
       client_email:
@@ -30,7 +30,7 @@ connections:
 
 pages:
   # Define the survey page
-  - id: survey 
+  - id: survey
     type: Context
     style:
       background: '#ababab'
@@ -42,14 +42,14 @@ pages:
         connectionId: employee_sheet
         properties:
           # Filter all employees which has the role of "Sales person" in the data
-          filter: 
-            role: Sales person 
+          filter:
+            role: Sales person
     events:
       onInitAsync:
-        # When the page initializes, the get_employee request is executed to fetch all "Sales person" employees. 
-        - id: go_get_employees  
+        # When the page initializes, the get_employee request is executed to fetch all "Sales person" employees.
+        - id: go_get_employees
           type: Request
-          params: get_employees # Here we refer to the get_employees id. 
+          params: get_employees # Here we refer to the get_employees id.
     blocks:
       # Add some very basic HTML to create a nice customer friendly company banner.
       - id: logo
@@ -61,7 +61,7 @@ pages:
       # Wrap our survey questioner to center it nicely for all screen sizes.
       - id: content_box
         type: Box
-        style:  
+        style:
           maxWidth: 660
           padding: 30px 30px 60px 30px
           minHeight: 90vh
@@ -86,9 +86,9 @@ pages:
               content: Your input is highly valued here at Dunder Mifflin. Your feedback will mostly be used to improve our service to you.
               level: 4
           # The first input field will manage the name field in the page context state variable.
-          - id: name 
+          - id: name
             type: TextInput
-            required: true # We indicate that some fields are required, later we will validate our input before submitting the data to the server. 
+            required: true # We indicate that some fields are required, later we will validate our input before submitting the data to the server.
             properties:
               title: Name & Surname
               size: large
@@ -116,7 +116,7 @@ pages:
               # These operators evaluate to `true` when the type field is selected and is not equal to the "Feedback" option.
               _and:
                 - _not:
-                    _eq: 
+                    _eq:
                       - _state: type
                       - Feedback
                 - _state: type
@@ -128,13 +128,13 @@ pages:
                 _mql.aggregate:
                   on:
                     _if_none: # Since we are fetching the `get_employees` with onInitAsync, `_request: get_employees` will be `null` until a request response is received. Checking for _if_none here handles the non-array type `on` input error until the data is returned be the request.
-                      -  _request: get_employees
+                      - _request: get_employees
                       - []
                   pipeline:
                     - $project:
                         value: $name
                         label: $name
-                    - $sort: 
+                    - $sort:
                         label: 1
           - id: response
             type: TextArea
@@ -156,7 +156,7 @@ pages:
               textAlign: center
               paddingTop: 20
             properties:
-              content: One last thing, based on your experience with us, how likely are you to recommend Dunder Mufflin Paper Company? 
+              content: One last thing, based on your experience with us, how likely are you to recommend Dunder Mufflin Paper Company?
               level: 4
           - id: satisfaction
             type: RatingSlider
@@ -171,11 +171,11 @@ pages:
             type: Title
             visible:
               # Show a different question based on the customer satisfaction rating.
-              _and: 
-                - _lte: 
+              _and:
+                - _lte:
                     - _state: satisfaction
                     - 7
-                - _if_none: 
+                - _if_none:
                     - _state: satisfaction
                     - false
             style:
@@ -184,9 +184,9 @@ pages:
             properties:
               content:
                 # Some unfair logic to bias Dwight's scores, and also because Jim is probably up to no good.
-                _if: 
-                  test: 
-                    _eq: 
+                _if:
+                  test:
+                    _eq:
                       - _state: sales_person
                       - Dwight Schrute
                   then: Wait! Be careful what you write... (Did Jim put you up to this?)
@@ -196,18 +196,18 @@ pages:
             type: TextArea
             required: true
             visible:
-              _and: 
-                - _lte: 
+              _and:
+                - _lte:
                     - _state: satisfaction
                     - 7
-                - _if_none: 
+                - _if_none:
                     - _state: satisfaction
                     - false
             properties:
               title: Please could your provide us with some further detail on your hesitancy to recommend us so we know what to work on.
               placeholder: What could we have done better?
               size: large
-              label: 
+              label:
                 colon: false
           - id: promoter_response_title
             type: Title
@@ -232,7 +232,7 @@ pages:
               title: Good news should be shared! Please can you let us know what made you smile so we can keep up the good work.
               placeholder: What did you like?
               size: large
-              label: 
+              label:
                 colon: false
           - id: save
             type: Button
@@ -320,7 +320,7 @@ pages:
           html: '<div style="background: #fff; text-align: center; padding: 10px"><img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_logo.jpg" height="80px"/></div>'
       - id: content_box
         type: Box
-        style:  
+        style:
           maxWidth: 660
           padding: 30px 30px 60px 30px
           minHeight: 90vh
@@ -345,7 +345,7 @@ pages:
             properties:
               html: |
                 Webform data saved to <a href="https://docs.google.com/spreadsheets/d/1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU/edit?usp=sharing">this Google Sheet</a>.
-                <br/><br/> This Lowdefy example reads and writes data from a Google sheet and manages complex webform logic. <br/> All in 400 lines of YAML. 
+                <br/><br/> This Lowdefy example reads and writes data from a Google sheet and manages complex webform logic. <br/> All in 400 lines of YAML.
                 <br/><br/> <a href="https://github.com/lowdefy/lowdefy-example-survey">Visit the repo for the Lowdefy config.</a>
                 <br/><br/> <img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_thank_you.gif" width="100%"/>
                 <br/><br/> <h5>Built with</h5>
