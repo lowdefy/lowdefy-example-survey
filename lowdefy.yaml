@@ -1,5 +1,5 @@
 name: lowdefy-example-survey
-lowdefy: 3.21.2
+lowdefy: 4.0.0-alpha.37
 licence: MIT
 connections:
   # Create a connection to our Google sheet which will store our survey data.
@@ -31,7 +31,7 @@ connections:
 pages:
   # Define the survey page
   - id: survey
-    type: Context
+    type: Box
     style:
       background: '#ababab'
     layout:
@@ -268,7 +268,7 @@ pages:
               title: Submit
               block: true
               color: '#000'
-              icon: CheckOutlined
+              icon: AiOutlineCheck
               size: large
           - id: header_bar
             type: Html
@@ -302,11 +302,12 @@ pages:
                 layout:
                   shrink: 1
                 properties:
-                  href: https://github.com/lowdefy/lowdefy-example-survey
+                  url: https://github.com/lowdefy/lowdefy-example-survey
                   title: ⚡️ View the Lowdefy config for this app ⚡️
+                  newTab: true
   # Create a simple thank you page to show customers when they have completed the survey.
   - id: thank-you
-    type: Context
+    type: Box
     style:
       background: '#ababab'
     layout:
@@ -369,5 +370,6 @@ pages:
                 layout:
                   shrink: 1
                 properties:
-                  href: https://github.com/lowdefy/lowdefy-example-survey
+                  url: https://github.com/lowdefy/lowdefy-example-survey
                   title: ⚡️ View the Lowdefy config for this app ⚡️
+                  newTab: true
