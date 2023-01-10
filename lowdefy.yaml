@@ -244,9 +244,12 @@ pages:
               - id: save_survey
                 type: GoogleSheetAppendOne
                 connectionId: survey_sheet
-                properties:
+                payload:
                   row:
                     _state: true
+                properties:
+                  row:
+                    _payload: row
             events:
               # When the save button is clicked:
               onClick:
