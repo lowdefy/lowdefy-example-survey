@@ -1,0 +1,68 @@
+# Create a simple thank you page to show customers when they have completed the survey.
+id: thank-you
+type: Box
+style:
+  background: '#ababab'
+layout:
+  contentAlign: center
+blocks:
+  - id: logo
+    type: Html
+    style:
+      borderBottom: '0.3em solid #000'
+    properties:
+      html: '<div style="background: #fff; text-align: center; padding: 10px"><img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_logo.jpg" height="80px"/></div>'
+  - id: content_box
+    type: Box
+    style:
+      maxWidth: 660
+      padding: 30px 30px 60px 30px
+      minHeight: 90vh
+      background: '#fff'
+    layout:
+      contentGutter: 20
+    blocks:
+      - id: title
+        type: Title
+        style:
+          textAlign: center
+          paddingTop: 20
+        properties:
+          content: Thank you for you feedback!
+          level: 1
+      - id: thank_you
+        type: Html
+        style:
+          maxWidth: 400
+          margin: auto
+          textAlign: center
+        properties:
+          html: |
+            Webform data saved to <a href="https://docs.google.com/spreadsheets/d/1wldNzkdP7-qSBz8pdtYrx8dlTw01vqQ9gn6KfXPg5DU/edit?usp=sharing">this Google Sheet</a>.
+            <br/><br/> This Lowdefy example reads and writes data from a Google sheet and manages complex webform logic. <br/> All in 400 lines of YAML.
+            <br/><br/> <a href="https://github.com/lowdefy/lowdefy-example-survey">Visit the repo for the Lowdefy config.</a>
+            <br/><br/> <img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_thank_you.gif" width="100%"/>
+            <br/><br/> <h5>Built with</h5>
+            <a href="https://lowdefy.com"><img src="https://mrm-public.s3.af-south-1.amazonaws.com/box_black_250.png" width="120px"/></a>
+  - id: affix
+    type: Affix
+    properties:
+      offsetBottom: 0
+    blocks:
+      - id: bar_footer
+        type: Box
+        layout:
+          contentJustify: center
+        style:
+          background: '#fff'
+          padding: 5
+          borderTop: '0.3em solid #000'
+        blocks:
+          - id: link_repo
+            type: Anchor
+            layout:
+              shrink: 1
+            properties:
+              url: https://github.com/lowdefy/lowdefy-example-survey
+              title: ⚡️ View the Lowdefy config for this app ⚡️
+              newTab: true
