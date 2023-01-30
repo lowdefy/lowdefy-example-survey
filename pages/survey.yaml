@@ -1,0 +1,279 @@
+# Define the survey page
+id: survey
+type: Box
+style:
+  background: '#ababab'
+layout:
+  contentAlign: center
+requests:
+  - id: get_employees
+    type: GoogleSheetGetMany
+    connectionId: employee_sheet
+    properties:
+      # Filter all employees which has the role of "Sales person" in the data
+      filter:
+        role: Sales person
+events:
+  onInitAsync:
+    # When the page initializes, the get_employee request is executed to fetch all "Sales person" employees.
+    - id: go_get_employees
+      type: Request
+      params: get_employees # Here we refer to the get_employees id.
+blocks:
+  # Add some very basic HTML to create a nice customer friendly company banner.
+  - id: logo
+    type: Html
+    style:
+      borderBottom: '0.3em solid #000'
+    properties:
+      html: '<div style="background: #fff; text-align: center; padding: 10px"><img src="https://lowdefy-public.s3-eu-west-1.amazonaws.com/dunder_logo.jpg" height="80px"/></div>'
+  # Wrap our survey questioner to center it nicely for all screen sizes.
+  - id: content_box
+    type: Box
+    style:
+      maxWidth: 660
+      padding: 30px 30px 60px 30px
+      minHeight: 90vh
+      background: '#fff'
+    layout:
+      contentGutter: 20
+    blocks:
+      - id: title
+        type: Title
+        style:
+          textAlign: center
+          paddingTop: 20
+        properties:
+          content: How was your paper experience?
+          level: 1
+      - id: intro
+        type: Title
+        style:
+          textAlign: center
+          paddingTop: 20
+        properties:
+          content: Your input is highly valued here at Dunder Mifflin. Your feedback will mostly be used to improve our service to you.
+          level: 4
+      # The first input field will manage the name field in the page context state variable.
+      - id: name
+        type: TextInput
+        required: true # We indicate that some fields are required, later we will validate our input before submitting the data to the server.
+        properties:
+          title: Name & Surname
+          size: large
+      - id: company
+        type: TextInput
+        required: true
+        properties:
+          title: Company Name
+          size: large
+      - id: type
+        type: ButtonSelector
+        required: true
+        properties:
+          title: Type
+          size: large
+          options:
+            - Feedback
+            - Query
+            - Complaint
+      # The visible field is used to determine when a block should exist. As a block goes invisible, its field is also remove from the context state.
+      - id: sales_person
+        type: Selector
+        required: true
+        visible:
+          # These operators evaluate to `true` when the type field is selected and is not equal to the "Feedback" option.
+          _and:
+            - _not:
+                _eq:
+                  - _state: type
+                  - Feedback
+            - _state: type
+        properties:
+          title: Sales Person
+          size: large
+          options:
+            # The list of selector options are populated from the result of our get_employees request. Here we make use of the mql aggregate operator to modify our request response and sort according to label. The mql.aggregate operator is a client side implementation to run aggregations on client side data using an implementation of MongoDB's Aggregation language.
+            _mql.aggregate:
+              on:
+                _if_none: # Since we are fetching the `get_employees` with onInitAsync, `_request: get_employees` will be `null` until a request response is received. Checking for _if_none here handles the non-array type `on` input error until the data is returned be the request.
+                  - _request: get_employees
+                  - []
+              pipeline:
+                - $project:
+                    value: $name
+                    label: $name
+                - $sort:
+                    label: 1
+      - id: response
+        type: TextArea
+        required: true
+        visible: # The `response` field will only be visible in our webform if the `type` field has a value.
+          _if_none:
+            - _state: type
+            - false
+        properties:
+          title: Please tell us more
+          size: large
+      - id: satisfaction_title
+        type: Title
+        visible:
+          _if_none:
+            - _state: response
+            - false
+        style:
+          textAlign: center
+          paddingTop: 20
+        properties:
+          content: One last thing, based on your experience with us, how likely are you to recommend Dunder Mufflin Paper Company?
+          level: 4
+      - id: satisfaction
+        type: RatingSlider
+        visible:
+          _if_none:
+            - _state: response
+            - false
+        properties:
+          label:
+            disabled: true
+      - id: detractor_response_title
+        type: Title
+        visible:
+          # Show a different question based on the customer satisfaction rating.
+          _and:
+            - _lte:
+                - _state: satisfaction
+                - 7
+            - _if_none:
+                - _state: satisfaction
+                - false
+        style:
+          textAlign: center
+          paddingTop: 20
+        properties:
+          content:
+            # Some unfair logic to bias Dwight's scores, and also because Jim is probably up to no good.
+            _if:
+              test:
+                _eq:
+                  - _state: sales_person
+                  - Dwight Schrute
+              then: Wait! Be careful what you write... (Did Jim put you up to this?)
+              else: Oh no! We can do better!
+          level: 4
+      - id: detractor_response
+        type: TextArea
+        required: true
+        visible:
+          _and:
+            - _lte:
+                - _state: satisfaction
+                - 7
+            - _if_none:
+                - _state: satisfaction
+                - false
+        properties:
+          title: Please could your provide us with some further detail on your hesitancy to recommend us so we know what to work on.
+          placeholder: What could we have done better?
+          size: large
+          label:
+            colon: false
+      - id: promoter_response_title
+        type: Title
+        visible:
+          _gt:
+            - _state: satisfaction
+            - 7
+        style:
+          textAlign: center
+          paddingTop: 20
+        properties:
+          content: Your smile makes us smile!
+          level: 4
+      - id: promoter_response
+        type: TextArea
+        required: true
+        visible:
+          _gt:
+            - _state: satisfaction
+            - 7
+        properties:
+          title: Good news should be shared! Please can you let us know what made you smile so we can keep up the good work.
+          placeholder: What did you like?
+          size: large
+          label:
+            colon: false
+      - id: save
+        type: Button
+        visible:
+          _if_none:
+            - _state: satisfaction
+            - false
+        requests:
+          - id: save_survey
+            type: GoogleSheetAppendOne
+            connectionId: survey_sheet
+            payload:
+              row:
+                _state: true
+            properties:
+              row:
+                _payload: row
+        events:
+          # When the save button is clicked:
+          onClick:
+            - id: set_state # Add a timestamp variable to the context state.
+              type: SetState
+              params:
+                timestamp:
+                  _date: now
+            - id: validate # Then validate our webform input.
+              type: Validate
+            - id: call_save # Then call the `save_survey` request which will insert the new response record on the survey Google sheet.
+              type: Request
+              params: save_survey
+            - id: to_thank_you_page # Lastly redirect the customer to the `think-you` page.
+              type: Link
+              params:
+                pageId: thank-you
+        properties:
+          title: Submit
+          block: true
+          color: '#000'
+          icon: AiOutlineCheck
+          size: large
+      - id: header_bar
+        type: Html
+        visible:
+          _if_none:
+            - _state: satisfaction
+            - false
+        style:
+          fontSize: 10
+          textAlign: center
+          color: red
+        properties:
+          html: For this example, the submitted data will be public.
+  # Add a static footer to the bottom of the page to link to this repository.
+  - id: affix
+    type: Affix
+    properties:
+      offsetBottom: 0
+    blocks:
+      - id: bar_footer
+        type: Box
+        layout:
+          contentJustify: center
+        style:
+          background: '#fff'
+          padding: 5
+          borderTop: '0.3em solid #000'
+        blocks:
+          - id: link_repo
+            type: Anchor
+            layout:
+              shrink: 1
+            properties:
+              url: https://github.com/lowdefy/lowdefy-example-survey
+              title: ⚡️ View the Lowdefy config for this app ⚡️
+              newTab: true
